@@ -1,0 +1,16 @@
+<!-- myapp/templates/games_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista Gier</title>
+</head>
+<body>
+    <h1>Lista Gier</h1>
+    <ul>
+        {% for game in games %}
+        <li>{{ game.title }} - Ocena: {{ game.average_rating }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
