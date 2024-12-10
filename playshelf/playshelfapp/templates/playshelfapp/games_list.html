@@ -56,7 +56,9 @@
             {% endfor %}
         </div>
         {% else %}
-        <p class="text-center">Brak dostępnych gier do wyświetlenia.</p>
+        <div class="alert alert-warning text-center" role="alert">
+            Brak dostępnych gier do wyświetlenia.
+        </div>
         {% endif %}
     </div>
 
