@@ -1,0 +1,27 @@
+extends layout
+
+block content
+  .container.mt-4
+    h1.text-center Lista Gier
+    if games.length
+      .row
+        each game in games
+          .col-md-4.mb-4
+            .card.shadow-sm.p-3
+              .card-body
+                h5.card-title= game.title
+                p.card-text
+                  strong Developer: 
+                  | #{game.developer}
+                  br
+                  strong Publisher: 
+                  | #{game.publisher}
+                  br
+                  strong Data premiery: 
+                  | #{game.release_date}
+                  br
+                  strong Ocena: 
+                  | #{game.average_rating}
+                p.card-text= game.description
+    else
+      p.text-center Brak dostępnych gier do wyświetlenia.
