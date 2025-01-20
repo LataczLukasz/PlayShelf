@@ -26,7 +26,14 @@ html(lang="pl")
                                         strong Ocena: 
                                         | #{game.average_rating}
                                     p.card-text= game.description
+                                    // Dodanie przycisku "Oceń"
+                                    .d-grid
+                                        button.btn.btn-primary(onclick=`rateGame(${game.game_id})`) Oceń
             else
                 p.text-center Brak dostępnych gier do wyświetlenia.
 
         script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js")
+        script.
+            rateGame = async (gameId) => {
+                window.location.href = `/rating/${gameId}`;
+            }

@@ -1,12 +1,16 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-class User(models.Model):
+class User(AbstractUser):
     user_id = models.AutoField(primary_key=True)
+    email = models.EmailField(unique=True)
     username = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
-    email = models.EmailField()
     registration_date = models.DateField()
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = [] 
+    
     def __str__(self):
         return self.username
 
@@ -18,7 +22,6 @@ class Game(models.Model):
     developer = models.CharField(max_length=255)
     publisher = models.CharField(max_length=255)
     description = models.TextField()
-    average_rating = models.FloatField()
 
     def __str__(self):
         return self.title
