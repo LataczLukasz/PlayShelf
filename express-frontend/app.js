@@ -11,6 +11,11 @@ app.set('view engine', 'pug');
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+app.use((req, res, next) => {
+    res.locals.isLoggedIn = !!req.cookies.auth_token;
+    next();
+});
+
 const indexRouter = require('./routes/index');
 const gamesRouter = require('./routes/games');
 const authRouter = require('./routes/auth');
