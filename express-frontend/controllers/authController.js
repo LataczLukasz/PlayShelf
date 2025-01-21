@@ -6,13 +6,14 @@ exports.login = async (req, res) => {
     try {
         const loginURL = `${serverURL}/api/login/`;
         const response = await axios.post(loginURL, { email, password });
+        
         if (response.status === 200 && response.data.access_token) {
             res.cookie('auth_token', response.data.access_token, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                maxAge: 7 * 24 * 60 * 60 * 1000
+                maxAge: 7 * 24 * 60 * 60 * 1000 // 7 dni
             });
-            res.redirect('/');
+            res.redirect('/games'); // Zmiana na przekierowanie do '/games'
         } else {
             const errorMessage = response.data.error || 'Nieoczekiwana odpowiedź serwera.';
             res.render('login', { error: errorMessage, success: null });
