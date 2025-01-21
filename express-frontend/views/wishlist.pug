@@ -1,112 +1,102 @@
 extends layout
 
 block content
-    doctype html
-    html(lang="pl")
-        head
-            title Moja lista życzeń
-            link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css")
-        body
-            .container.mt-4
-                h1.text-center Moja lista życzeń
-                .text-center.mb-3
-                    button.btn.btn-secondary(onclick="sortGames('asc')") Sortuj rosnąco
-                    button.btn.btn-secondary(onclick="sortGames('desc')") Sortuj malejąco
-                .text-center.mb-3
-                    input.form-control(type="text", id="searchInput", placeholder="Szukaj po tytule lub developerze", oninput="filterGames()")
-                if games.length
-                    // Sortowanie gier po tytule
-                    - games.sort((a, b) => a.title.localeCompare(b.title))
-                    .row
-                        each game in games
-                            .col-md-4.mb-4
-                                .card.shadow-sm.p-3
-                                    if game.image_url
-                                        img.card-img-top(src=game.image_url, alt=game.title)
-                                    .card-body
-                                        h5.card-title= game.title
-                                        p.card-text
-                                            strong Developer: 
-                                            | #{game.developer}
-                                            br
-                                            strong Publisher: 
-                                            | #{game.publisher}
-                                            br
-                                            strong Data premiery: 
-                                            | #{game.release_date}
-                                            br
-                                            strong Ocena: 
-                                            | #{game.average_rating}
-                                        p.card-text= game.description
-                                        // Dodanie przycisku "Usuń grę"
-                                        .d-grid
-                                            button.btn.btn-primary(onclick=`gameWishlistRemove(${game.game_id})`) Usuń grę
-                else
-                    p.text-center Brak dostępnych gier do wyświetlenia.
-            
-            script.
-                let games = !{JSON.stringify(games)};
-                
-                const sortGames = (order) => {
-                    games.sort((a, b) => {
-                        if (order === 'asc') {
-                            return a.title.localeCompare(b.title);
-                        } else {
-                            return b.title.localeCompare(a.title);
-                        }
-                    });
-                    renderGames();
-                };
+  .container.mt-4
+    h1.text-center Moja lista życzeń
+    .text-center.mb-3
+      button.btn.btn-secondary(onclick="sortGames('asc')") Sortuj rosnąco
+      button.btn.btn-secondary(onclick="sortGames('desc')") Sortuj malejąco
+    .text-center.mb-3
+      input.form-control(type="text", id="searchInput", placeholder="Szukaj po tytule lub developerze", oninput="filterGames()")
+    
+    if games.length
+      // Sortowanie gier po tytule
+      - games.sort((a, b) => a.title.localeCompare(b.title))
+      .row
+        each game in games
+          .col-md-4.mb-4
+            .card.shadow-sm.p-3
+              if game.image_url
+                img.card-img-top(src=game.image_url, alt=game.title)
+              .card-body
+                h5.card-title= game.title
+                p.card-text
+                  strong Developer: 
+                  | #{game.developer}
+                  br
+                  strong Publisher: 
+                  | #{game.publisher}
+                  br
+                  strong Data premiery: 
+                  | #{game.release_date}
+                p.card-text= game.description
+                // Dodanie przycisku "Usuń grę"
+                .d-grid
+                  button.btn.btn-primary(onclick=`gameWishlistRemove(${game.game_id})`) Usuń grę
+    else
+      p.text-center Brak dostępnych gier do wyświetlenia.
+  
+  script.
+    let games = !{JSON.stringify(games)};
+    
+    const sortGames = (order) => {
+      games.sort((a, b) => {
+        if (order === 'asc') {
+          return a.title.localeCompare(b.title);
+        } else {
+          return b.title.localeCompare(a.title);
+        }
+      });
+      renderGames();
+    };
 
-                const filterGames = () => {
-                    const searchInput = document.getElementById('searchInput').value.toLowerCase();
-                    const filteredGames = games.filter(game => 
-                        game.title.toLowerCase().includes(searchInput) || 
-                        game.developer.toLowerCase().includes(searchInput)
-                    );
-                    renderGames(filteredGames);
-                };
+    const filterGames = () => {
+      const searchInput = document.getElementById('searchInput').value.toLowerCase();
+      const filteredGames = games.filter(game => 
+        game.title.toLowerCase().includes(searchInput) || 
+        game.developer.toLowerCase().includes(searchInput)
+      );
+      renderGames(filteredGames);
+    };
 
-                const renderGames = (filteredGames = games) => {
-                    const container = document.querySelector('.row');
-                    container.innerHTML = '';
-                    filteredGames.forEach(game => {
-                        const gameCard = `
-                            <div class="col-md-4 mb-4">
-                                <div class="card shadow-sm p-3">
-                                    ${game.image_url ? `<img class="card-img-top" src="${game.image_url}" alt="${game.title}">` : ''}
-                                    <div class="card-body">
-                                        <h5 class="card-title">${game.title}</h5>
-                                        <p class="card-text">
-                                            <strong>Developer:</strong> ${game.developer}<br>
-                                            <strong>Publisher:</strong> ${game.publisher}<br>
-                                            <strong>Data premiery:</strong> ${game.release_date}<br>
-                                            <strong>Ocena:</strong> ${game.average_rating}
-                                        </p>
-                                        <p class="card-text">${game.description}</p>
-                                        <div class="d-grid">
-                                            <button class="btn btn-primary" onclick="gameWishlistRemove(${game.game_id})">Usuń grę</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        container.insertAdjacentHTML('beforeend', gameCard);
-                    });
-                };
+    const renderGames = (filteredGames = games) => {
+      const container = document.querySelector('.row');
+      container.innerHTML = '';
+      filteredGames.forEach(game => {
+        const gameCard = `
+          <div class="col-md-4 mb-4">
+            <div class="card shadow-sm p-3">
+              ${game.image_url ? `<img class="card-img-top" src="${game.image_url}" alt="${game.title}">` : ''}
+              <div class="card-body">
+                <h5 class="card-title">${game.title}</h5>
+                <p class="card-text">
+                  <strong>Developer:</strong> ${game.developer}<br>
+                  <strong>Publisher:</strong> ${game.publisher}<br>
+                  <strong>Data premiery:</strong> ${game.release_date}<br>
+                </p>
+                <p class="card-text">${game.description}</p>
+                <div class="d-grid">
+                  <button class="btn btn-primary" onclick="gameWishlistRemove(${game.game_id})">Usuń grę</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', gameCard);
+      });
+    };
 
-                gameWishlistRemove = async (gameId) => {
-                    fetch(`/games/gameWishlistRemove/${gameId}`, {
-                        method: 'GET',
-                        credentials: 'include',
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        alert(data.message);
-                        window.location.reload();
-                    })
-                    .catch(error => {
-                        console.error("Błąd:", error);
-                        alert("Nie udało się usunąć gry z listy życzeń.");
-                    });
-                };
+    gameWishlistRemove = async (gameId) => {
+      try {
+        const response = await fetch(`/games/gameWishlistRemove/${gameId}`, {
+          method: 'GET',
+          credentials: 'include',
+        });
+        const data = await response.json();
+        alert(data.message);
+        window.location.reload();
+      } catch (error) {
+        console.error("Błąd:", error);
+        alert("Nie udało się usunąć gry z listy życzeń.");
+      }
+    };

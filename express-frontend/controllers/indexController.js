@@ -3,7 +3,7 @@ exports.index = (req, res) => {
     if(authToken)
     {
         res.redirect('games')
-    }else{
+    } else {
         res.redirect('login')
     }
     // res.render('index', {

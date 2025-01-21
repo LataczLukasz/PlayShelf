@@ -11,7 +11,10 @@ exports.getGames = async (req, res) => {
             }
         });
         const games = response.data.games;
-        res.render('games', { games });
+        res.render('games', {
+            title: "Lista gier",
+            games
+        });
     } catch (error) {
         console.error('Błąd podczas pobierania gier:', error);
         res.status(500).send('Wystąpił błąd podczas pobierania gier.');
