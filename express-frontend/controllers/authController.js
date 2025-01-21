@@ -1,5 +1,5 @@
 const axios = require('axios');
-const serverURL = 'http://127.0.0.1:8000'; // Zmień na swój URL
+const serverURL = 'http://127.0.0.1:8000';
 
 exports.login = async (req, res) => {
     const { email, password } = req.body;
@@ -11,9 +11,9 @@ exports.login = async (req, res) => {
             res.cookie('auth_token', response.data.access_token, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                maxAge: 7 * 24 * 60 * 60 * 1000 // 7 dni
+                maxAge: 7 * 24 * 60 * 60 * 1000 
             });
-            res.redirect('/games'); // Zmiana na przekierowanie do '/games'
+            res.redirect('/games');
         } else {
             const errorMessage = response.data.error || 'Nieoczekiwana odpowiedź serwera.';
             res.render('login', { error: errorMessage, success: null });

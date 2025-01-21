@@ -13,6 +13,9 @@ app.use(cookieParser());
 
 app.use((req, res, next) => {
     res.locals.isLoggedIn = !!req.cookies.auth_token;
+    if (res.locals.isLoggedIn && (req.path === '/login' || req.path === '/register')) {
+        return res.redirect('/games');
+    }
     next();
 });
 
