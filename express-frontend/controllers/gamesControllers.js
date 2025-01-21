@@ -17,7 +17,9 @@ exports.getGames = async (req, res) => {
         });
     } catch (error) {
         console.error('Błąd podczas pobierania gier:', error);
-        res.status(500).send('Wystąpił błąd podczas pobierania gier.');
+        res.status(500).render('error', {
+            message: 'Zaloguj się, aby uzyskać dostęp do tej strony.'
+        });
     }
 };
 
@@ -86,8 +88,10 @@ exports.getWishlist = async (req, res) => {
         const games = response.data.wishlist;
         res.render('wishlist', { games });
     } catch (error) {
-        console.error('Błąd podczas pobierania szczegółów gry:', error);
-        res.status(500).send('Wystąpił błąd podczas pobierania szczegółów gry.');
+        console.error('Błąd podczas pobierania gier z listy życzeń:', error);
+        res.status(500).render('error', {
+            message: 'Zaloguj się, aby uzyskać dostęp do tej strony.'
+        });
     }
 };
 
