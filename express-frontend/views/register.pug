@@ -1,32 +1,33 @@
-doctype html
-html
-  head
-    title Rejestracja
-    style.
-      body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
-      .container { width: 100%; max-width: 400px; margin: 0 auto; padding: 20px; background: #fff; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
-      input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 3px; }
-      button { width: 100%; padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 3px; cursor: pointer; }
-      button:hover { background-color: #45a049; }
-      .error { color: red; }
-      .success { color: green; }
-  body
-    .container
-      h1 Rejestracja
-      form(id='/register', method='POST')
-        div
-          label(for='email') Adres e-mail
-          input(type='email' name='email' id='email' placeholder='Wprowadź adres e-mail' required)
-        div
-          label(for='username') Nazwa użytkownika
-          input(type='text' name='username' id='username' placeholder='Wprowadź nazwę użytkownika' required)
-        div
-          label(for='password') Hasło
-          input(type='password' name='password' id='password' placeholder='Wprowadź hasło' required)
-        div
-        button(type='submit') Zarejestruj się
-        if (error)
-            .error
-                p= error
-      p Masz już konto? <a href='/login'>Zaloguj się</a>
-      div(id="message-box")
+block content
+  doctype html
+  html
+    head
+      title Rejestracja
+      style.
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
+        .container { width: 100%; max-width: 400px; margin: 0 auto; padding: 20px; background: #fff; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 3px; }
+        button { width: 100%; padding: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+        .error { color: red; }
+        .success { color: green; }
+    body
+      .container
+        h1 Rejestracja
+        form(id='/register', method='POST')
+          div
+            label(for='email') Adres e-mail
+            input(type='email' name='email' id='email' placeholder='Wprowadź adres e-mail' required)
+          div
+            label(for='username') Nazwa użytkownika
+            input(type='text' name='username' id='username' placeholder='Wprowadź nazwę użytkownika' required)
+          div
+            label(for='password') Hasło
+            input(type='password' name='password' id='password' placeholder='Wprowadź hasło' required)
+          div
+          button(type='submit') Zarejestruj się
+          if (error)
+              .error
+                  p= error
+        p Masz już konto? <a href='/login'>Zaloguj się</a>
+        div(id="message-box")

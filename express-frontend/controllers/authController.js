@@ -39,3 +39,9 @@ exports.register = async (req, res) => {
         res.render('register', { error: errorMessage, success: null });
     }
 };
+
+exports.logout = (req, res) => {
+    res.clearCookie('auth_token');
+    res.redirect('/login');
+  };
+  

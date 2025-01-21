@@ -4,17 +4,19 @@ block content
     doctype html
     html(lang="pl")
         head
-            title Lista Gier
+            title Moja lista życzeń
             link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css")
         body
             .container.mt-4
-                h1.text-center Lista Gier
+                h1.text-center Moja lista życzeń
                 .text-center.mb-3
                     button.btn.btn-secondary(onclick="sortGames('asc')") Sortuj rosnąco
                     button.btn.btn-secondary(onclick="sortGames('desc')") Sortuj malejąco
                 .text-center.mb-3
                     input.form-control(type="text", id="searchInput", placeholder="Szukaj po tytule lub developerze", oninput="filterGames()")
                 if games.length
+                    // Sortowanie gier po tytule
+                    - games.sort((a, b) => a.title.localeCompare(b.title))
                     .row
                         each game in games
                             .col-md-4.mb-4
@@ -36,14 +38,12 @@ block content
                                             strong Ocena: 
                                             | #{game.average_rating}
                                         p.card-text= game.description
-                                        // Dodanie przycisku "Oceń"
+                                        // Dodanie przycisku "Usuń grę"
                                         .d-grid
-                                            button.btn.btn-primary(onclick=`rateGame(${game.game_id})`) Oceń
-                                            button.btn.btn-primary(onclick=`addToWishlist(${game.game_id})`) Dodaj do listy życzeń
+                                            button.btn.btn-primary(onclick=`gameWishlistRemove(${game.game_id})`) Usuń grę
                 else
                     p.text-center Brak dostępnych gier do wyświetlenia.
-
-            script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js")
+            
             script.
                 let games = !{JSON.stringify(games)};
                 
@@ -85,8 +85,7 @@ block content
                                         </p>
                                         <p class="card-text">${game.description}</p>
                                         <div class="d-grid">
-                                            <button class="btn btn-primary" onclick="rateGame(${game.game_id})">Oceń</button>
-                                            <button class="btn btn-primary" onclick="addToWishlist(${game.game_id})">Dodaj do listy życzeń</button>
+                                            <button class="btn btn-primary" onclick="gameWishlistRemove(${game.game_id})">Usuń grę</button>
                                         </div>
                                     </div>
                                 </div>
@@ -96,21 +95,18 @@ block content
                     });
                 };
 
-                rateGame = async (gameId) => {
-                    window.location.href = `games/rating/${gameId}`;
-                };
-
-                addToWishlist = async (gameId) => {
-                    fetch(`games/addToWishlist/${gameId}`, {
+                gameWishlistRemove = async (gameId) => {
+                    fetch(`/games/gameWishlistRemove/${gameId}`, {
                         method: 'GET',
                         credentials: 'include',
                     })
                     .then(response => response.json())
                     .then(data => {
                         alert(data.message);
+                        window.location.reload();
                     })
                     .catch(error => {
                         console.error("Błąd:", error);
-                        alert("Nie udało się dodać gry do listy życzeń.");
+                        alert("Nie udało się usunąć gry z listy życzeń.");
                     });
                 };

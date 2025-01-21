@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.shortcuts import render
 from django.http import HttpRequest, JsonResponse
-from .models import Game, Review, User
+from .models import Game, Review, User, Wishlist, GameImage
 from .serializers import GameSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -34,30 +34,22 @@ def contact(request):
         'message': 'You can contact us at this email.'
 })
 
-class GameList(APIView):
-    permission_classes = [IsAuthenticated]
-    def get(self, request):
-        games = Game.objects.all()
-        serializer = GameSerializer(games, many=True)
-        return Response({'games': serializer.data})
-
-
 class CustomTokenObtainPairView(TokenObtainPairView):
     permission_classes = []
     serializer_class = CustomTokenObtainPairSerializer
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         
-        # Sprawdź, czy dane są poprawne
+
         if serializer.is_valid():
-            # Jeśli dane są poprawne, zwróć tokeny w formacie JSON
+
             return Response({
                 'message': 'Zalogowano pomyślnie',
                 'access_token': serializer.validated_data['access'],
                 'refresh_token': serializer.validated_data['refresh']
             }, status=status.HTTP_200_OK)
         else:
-            # W przypadku błędów zwróć komunikat z błędami
+
             return Response({
                 'message': 'Nie udało się zalogować',
                 'errors': serializer.errors
@@ -75,7 +67,7 @@ class UserRegistrationView(APIView):
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
-            user = serializer.save()  # Tworzenie użytkownika
+            user = serializer.save() 
             return Response({
                 "message": "Rejestracja przebiegła pomyślnie.",
                 "user": {
@@ -91,8 +83,8 @@ class GameRatingsView(APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request, game_id):
-        user = request.user  # Uzyskujemy dane użytkownika
-        game = Game.objects.filter(game_id=game_id).first()  # Pobieramy grę na podstawie game_id
+        user = request.user 
+        game = Game.objects.filter(game_id=game_id).first()
         
         if not game:
             return Response({'error': 'Gra nie została znaleziona'}, status=404)
@@ -143,3 +135,72 @@ class GameRatingsEditView(APIView):
                 serializer.save(user=user, game=game)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+class GameWishlistAddView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        user = request.user
+        data = request.data
+        game_id = data.get('id')
+        game = Game.objects.filter(game_id=game_id).first()
+
+        if not game:
+            return Response({'error': 'Gra nie została znaleziona'}, status=status.HTTP_404_NOT_FOUND)
+
+        wishlist, created = Wishlist.objects.get_or_create(user=user, game=game)
+
+        if created:
+            return Response({'message': 'Gra została dodana do listy życzeń'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'message': 'Gra już znajduje się na liście życzeń'}, status=status.HTTP_200_OK)
+        
+class GameWishlistRemoveView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        user = request.user
+        data = request.data
+        game_id = data.get('id')
+        game = Game.objects.filter(game_id=game_id).first()
+
+        if not game:
+            return Response({'error': 'Gra nie została znaleziona'}, status=status.HTTP_404_NOT_FOUND)
+
+        wishlist_item = Wishlist.objects.filter(user=user, game=game).first()
+
+        if wishlist_item:
+            wishlist_item.delete()
+            return Response({'message': 'Gra została usunięta z listy życzeń'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Gra nie znajduje się na liście życzeń'}, status=status.HTTP_404_NOT_FOUND)
+
+class GameWishlistView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        user = request.user
+        wishlist_items = Wishlist.objects.filter(user=user)
+        games = [item.game for item in wishlist_items]
+        serializer = GameSerializer(games, many=True)
+        
+        games_with_images = []
+        for game in games:
+            game_data = serializer.data[games.index(game)]
+            game_image = GameImage.objects.filter(game=game).first()
+            game_data['image_url'] = game_image.image_url if game_image else None
+            games_with_images.append(game_data)
+        
+        return Response({'wishlist': games_with_images}, status=status.HTTP_200_OK)
+
+class GameList(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        games = Game.objects.all()
+        serializer = GameSerializer(games, many=True)
+        
+        games_with_images = []
+        for game, game_data in zip(games, serializer.data):
+            game_image = GameImage.objects.filter(game=game).first()
+            game_data['image_url'] = game_image.image_url if game_image else None
+            games_with_images.append(game_data)
+        
+        return Response({'games': games_with_images})

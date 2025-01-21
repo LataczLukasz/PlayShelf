@@ -1,88 +1,89 @@
-doctype html
-html(lang="pl")
-  head
-    meta(charset="UTF-8")
-    meta(name="viewport", content="width=device-width, initial-scale=1.0")
-    title Szczegóły Recenzji
-    style.
-      #editReviewModal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        justify-content: center;
-        align-items: center;
-      }
-      .modal-content {
-        background-color: white;
-        padding: 20px;
-        border-radius: 10px;
-        width: 300px;
-      }
-  body
-    h1 Szczegóły Recenzji dla gry #{game}
+extends layout
+block content
+  doctype html
+  html(lang="pl")
+    head
+      meta(charset="UTF-8")
+      meta(name="viewport", content="width=device-width, initial-scale=1.0")
+      title Szczegóły Recenzji
+      style.
+        #editReviewModal {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          justify-content: center;
+          align-items: center;
+        }
+        .modal-content {
+          background-color: white;
+          padding: 20px;
+          border-radius: 10px;
+          width: 300px;
+        }
+    body
+      h1 Szczegóły Recenzji dla gry #{game}
 
-    table(border="1", cellpadding="5", cellspacing="0")
-      thead
-        tr
-          th Ocena
-          th Treść Recenzji
-          th Data Recenzji
-          th Nazwa Użytkownika
-      tbody
-        if myReviews
+      table(border="1", cellpadding="5", cellspacing="0")
+        thead
           tr
-            td #{myReviews.rating}
-            td #{myReviews.review_text}
-            td #{myReviews.review_date}
-            td #{myReviews.username}
-          tr
-            td(colspan="4")
-              button(id="editReviewButton", type="button") Edytuj Recenzję
-        each review in reviews
-          tr
-            td #{review.rating}
-            td #{review.review_text}
-            td #{review.review_date}
-            td #{review.username}
+            th Ocena
+            th Treść Recenzji
+            th Data Recenzji
+            th Nazwa Użytkownika
+        tbody
+          if myReviews
+            tr
+              td #{myReviews.rating}
+              td #{myReviews.review_text}
+              td #{myReviews.review_date}
+              td #{myReviews.username}
+            tr
+              td(colspan="4")
+                button(id="editReviewButton", type="button") Edytuj Recenzję
+          each review in reviews
+            tr
+              td #{review.rating}
+              td #{review.review_text}
+              td #{review.review_date}
+              td #{review.username}
 
-    div(id="editReviewModal")
-      div(class="modal-content")
-        h2 Edytuj Recenzję
-        form(id="editReviewForm", action="/rating/add", method="POST")
+      div(id="editReviewModal")
+        div(class="modal-content")
+          h2 Edytuj Recenzję
+          form(id="editReviewForm", action="/games/rating/add", method="POST")
+            input(type="hidden", id="game_id", name="game_id", value=game_id)
+            div
+              label(for="rating") Ocena:
+              input(type="number", id="rating", name="rating", min="0", max="5", value=myReviews?myReviews.rating:0, required=true)
+            div
+              label(for="review_text") Treść recenzji:
+              textarea(id="review_text", name="review_text", required=true) #{myReviews? myReviews.review_text: ''}
+            div
+              button(type="submit") Zapisz zmiany
+          button(id="closeModal", type="button") Zamknij
+
+      if !myReviews
+        h2 Wystaw ocenę
+        form(action="/games/rating/add", method="POST")
           input(type="hidden", id="game_id", name="game_id", value=game_id)
           div
             label(for="rating") Ocena:
-            input(type="number", id="rating", name="rating", min="0", max="5", value=myReviews?myReviews.rating:0, required=true)
+            input(type="number", id="rating", name="rating", min="0", max="5", required=true)
           div
             label(for="review_text") Treść recenzji:
-            textarea(id="review_text", name="review_text", required=true) #{myReviews? myReviews.review_text: ''}
+            textarea(id="review_text", name="review_text", required=true)
           div
-            button(type="submit") Zapisz zmiany
-        button(id="closeModal", type="button") Zamknij
+            button(type="submit") Dodaj Recenzję
 
-    if !myReviews
-      h2 Wystaw ocenę
-      form(action="/rating/add", method="POST")
-        input(type="hidden", id="game_id", name="game_id", value=game_id)
-        div
-          label(for="rating") Ocena:
-          input(type="number", id="rating", name="rating", min="0", max="5", required=true)
-        div
-          label(for="review_text") Treść recenzji:
-          textarea(id="review_text", name="review_text", required=true)
-        div
-          button(type="submit") Dodaj Recenzję
+      script.
+        document.getElementById("editReviewButton").addEventListener("click", function() {
+          document.getElementById("editReviewModal").style.display = "flex";
+        });
 
-    script.
-      // Skrypt do obsługi wyświetlania formularza edycji recenzji
-      document.getElementById("editReviewButton").addEventListener("click", function() {
-        document.getElementById("editReviewModal").style.display = "flex";
-      });
-
-      document.getElementById("closeModal").addEventListener("click", function() {
-        document.getElementById("editReviewModal").style.display = "none";
-      });
+        document.getElementById("closeModal").addEventListener("click", function() {
+          document.getElementById("editReviewModal").style.display = "none";
+        });
