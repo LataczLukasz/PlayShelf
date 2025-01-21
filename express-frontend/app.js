@@ -16,13 +16,11 @@ app.use((req, res, next) => {
     next();
 });
 
-const indexRouter = require('./routes/index');
 const gamesRouter = require('./routes/games');
 const authRouter = require('./routes/auth');
 
-app.use('/', indexRouter);
-app.use('/games', gamesRouter);
 app.use('/', authRouter);
+app.use('/games', gamesRouter);
 
 app.use((req, res, next) => {
     next(httpErrors(404));
