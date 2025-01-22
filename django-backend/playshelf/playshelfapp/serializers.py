@@ -55,9 +55,12 @@ class DeveloperSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ReviewSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+
     class Meta:
         model = Review
-        fields = '__all__'
+        fields = ['rating', 'review_text', 'review_date', 'username']
+
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):

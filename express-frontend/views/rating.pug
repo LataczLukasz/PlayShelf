@@ -1,0 +1,70 @@
+extends layout
+
+block content
+  .container
+    h1 Szczegóły Recenzji dla gry #{game}
+
+    table.table.table-bordered
+      thead
+        tr
+          th Ocena
+          th Treść Recenzji
+          th Data Recenzji
+          th Nazwa Użytkownika
+      tbody
+        if myReviews
+          tr
+            td #{myReviews.rating}
+            td #{myReviews.review_text}
+            td #{myReviews.review_date}
+            td #{myReviews.username}
+          tr
+            td(colspan="4")
+              button(id="editReviewButton", type="button", class="btn btn-primary") Edytuj Recenzję
+        each review in reviews
+          tr
+            td #{review.rating}
+            td #{review.review_text}
+            td #{review.review_date}
+            td #{review.username}
+
+    div(id="editReviewModal", class="modal fade", tabindex="-1", role="dialog")
+      div(class="modal-dialog" role="document")
+        div(class="modal-content")
+          .modal-header
+            h5.modal-title Edytuj Recenzję
+            button(type="button", class="close", data-dismiss="modal", aria-label="Close")
+              span(aria-hidden="true") &times;
+          .modal-body
+            form(id="editReviewForm", action="/games/rating/add", method="POST")
+              input(type="hidden", id="game_id", name="game_id", value=game_id)
+              .form-group
+                label(for="rating") Ocena:
+                input(type="number", id="rating", name="rating", min="0", max="5", value=myReviews?myReviews.rating:0, required=true, class="form-control")
+              .form-group
+                label(for="review_text") Treść recenzji:
+                textarea(id="review_text", name="review_text", required=true, class="form-control") #{myReviews? myReviews.review_text: ''}
+              .modal-footer
+                button(type="submit", class="btn btn-primary") Zapisz zmiany
+                button(id="closeModal", type="button", class="btn btn-secondary") Zamknij
+
+    if !myReviews
+      h2 Wystaw ocenę
+      form(action="/games/rating/add", method="POST")
+        input(type="hidden", id="game_id", name="game_id", value=game_id)
+        .form-group
+          label(for="rating") Ocena:
+          input(type="number", id="rating", name="rating", min="0", max="5", required=true, class="form-control")
+        .form-group
+          label(for="review_text") Treść recenzji:
+          textarea(id="review_text", name="review_text", required=true, class="form-control")
+        button(type="submit", class="btn btn-success") Dodaj Recenzję
+
+  script.
+    document.getElementById("editReviewButton").addEventListener("click", function() {
+      $('#editReviewModal').modal('show');
+    });
+
+    document.getElementById("closeModal").addEventListener("click", function() {
+      $('#editReviewModal').modal('hide');
+    });

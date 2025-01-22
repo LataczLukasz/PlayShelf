@@ -1,0 +1,105 @@
+extends layout
+
+block content
+
+	.container.mt-4
+		h1.text-center= title
+		.text-center.mb-3.mt-4
+			button.btn.btn-secondary(style="margin-right: 8px;" onclick="sortGames('asc')") Sortuj rosnąco
+			button.btn.btn-secondary(onclick="sortGames('desc')") Sortuj malejąco
+		.text-center.mb-3
+			input.form-control(type="text", id="searchInput", placeholder="Szukaj po tytule lub developerze", oninput="filterGames()")
+		if games.length
+			.row
+				each game in games
+					.col-md-4.mb-4
+						.card.shadow-sm.p-3
+							if game.image_url
+								img.card-img-top(src=game.image_url, alt=game.title)
+							.card-body
+								h5.card-title= game.title
+								p.card-text
+									strong Developer: 
+									| #{game.developer}
+									br
+									strong Publisher: 
+									| #{game.publisher}
+									br
+									strong Data premiery: 
+									| #{game.release_date}
+								p.card-text= game.description
+								div.d-grid
+									button.btn.btn-primary(style="margin-right: 4px;" onclick=`rateGame(${game.game_id})`) Oceń
+									button.btn.btn-primary(onclick=`addToWishlist(${game.game_id})`) Dodaj do listy życzeń
+		else
+			p.text-center Brak dostępnych gier do wyświetlenia
+
+	script.
+		let games = !{JSON.stringify(games)};
+		
+		const sortGames = (order) => {
+			games.sort((a, b) => {
+				if (order === 'asc') {
+					return a.title.localeCompare(b.title);
+				} else {
+					return b.title.localeCompare(a.title);
+				}
+			});
+			renderGames();
+		};
+
+		const filterGames = () => {
+			const searchInput = document.getElementById('searchInput').value.toLowerCase();
+			const filteredGames = games.filter(game => 
+				game.title.toLowerCase().includes(searchInput) || 
+				game.developer.toLowerCase().includes(searchInput)
+			);
+			renderGames(filteredGames);
+		};
+
+		const renderGames = (filteredGames = games) => {
+			const container = document.querySelector('.row');
+			container.innerHTML = '';
+			filteredGames.forEach(game => {
+				const gameCard = `
+					<div class="col-md-4 mb-4">
+						<div class="card shadow-sm p-3">
+							${game.image_url ? `<img class="card-img-top" src="${game.image_url}" alt="${game.title}">` : ''}
+							<div class="card-body">
+								<h5 class="card-title">${game.title}</h5>
+								<p class="card-text">
+									<strong>Developer:</strong> ${game.developer}<br>
+									<strong>Publisher:</strong> ${game.publisher}<br>
+									<strong>Data premiery:</strong> ${game.release_date}<br>
+								</p>
+								<p class="card-text">${game.description}</p>
+								<div class="d-grid">
+									<button class="btn btn-primary" onclick="rateGame(${game.game_id})">Oceń</button>
+									<button class="btn btn-primary" onclick="addToWishlist(${game.game_id})">Dodaj do listy życzeń</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				`;
+				container.insertAdjacentHTML('beforeend', gameCard);
+			});
+		};
+
+		rateGame = async (gameId) => {
+			window.location.href = `games/rating/${gameId}`;
+		};
+
+		addToWishlist = async (gameId) => {
+			fetch(`games/addToWishlist/${gameId}`, {
+				method: 'GET',
+				credentials: 'include',
+			})
+			.then(response => response.json())
+			.then(data => {
+				alert(data.message);
+			})
+			.catch(error => {
+				console.error("Błąd:", error);
+				alert("Nie udało się dodać gry do listy życzeń.");
+			});
+		};
