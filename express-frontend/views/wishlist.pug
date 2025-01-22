@@ -4,7 +4,7 @@ block content
   .container.mt-4
     h1.text-center Moja lista życzeń
     .text-center.mb-3
-      button.btn.btn-secondary(onclick="sortGames('asc')") Sortuj rosnąco
+      button.btn.btn-secondary(style="margin-right: 8px;" onclick="sortGames('asc')") Sortuj rosnąco
       button.btn.btn-secondary(onclick="sortGames('desc')") Sortuj malejąco
     .text-center.mb-3
       input.form-control(type="text", id="searchInput", placeholder="Szukaj po tytule lub developerze", oninput="filterGames()")
@@ -34,7 +34,7 @@ block content
                 .d-grid
                   button.btn.btn-primary(onclick=`gameWishlistRemove(${game.game_id})`) Usuń grę
     else
-      p.text-center Brak dostępnych gier do wyświetlenia.
+      p.text-center Brak dostępnych gier do wyświetlenia
   
   script.
     let games = !{JSON.stringify(games)};
