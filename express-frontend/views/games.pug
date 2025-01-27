@@ -15,7 +15,7 @@ block content
 					.col-md-4.mb-4
 						.card.shadow-sm.p-3
 							if game.image_url
-								img.card-img-top(src=game.image_url, alt=game.title)
+								img.card-img-top(src=`/images/${game.image_url}`, alt=game.title)
 							.card-body
 								h5.card-title= game.title
 								p.card-text
@@ -64,7 +64,7 @@ block content
 				const gameCard = `
 					<div class="col-md-4 mb-4">
 						<div class="card shadow-sm p-3">
-							${game.image_url ? `<img class="card-img-top" src="${game.image_url}" alt="${game.title}">` : ''}
+							${game.image_url ? `<img class="card-img-top" src="/images/${game.image_url}" alt="${game.title}">` : ''}
 							<div class="card-body">
 								<h5 class="card-title">${game.title}</h5>
 								<p class="card-text">
