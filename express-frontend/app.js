@@ -11,6 +11,8 @@ app.set('view engine', 'pug');
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.use((req, res, next) => {
     res.locals.isLoggedIn = !!req.cookies.auth_token;
     if (res.locals.isLoggedIn && (req.path === '/login' || req.path === '/register')) {

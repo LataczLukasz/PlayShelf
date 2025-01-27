@@ -10,14 +10,13 @@ block content
       input.form-control(type="text", id="searchInput", placeholder="Szukaj po tytule lub developerze", oninput="filterGames()")
     
     if games.length
-      // Sortowanie gier po tytule
       - games.sort((a, b) => a.title.localeCompare(b.title))
       .row
         each game in games
           .col-md-4.mb-4
             .card.shadow-sm.p-3
               if game.image_url
-                img.card-img-top(src=game.image_url, alt=game.title)
+                img.card-img-top(src=`/images/${game.image_url}`, alt=game.title)
               .card-body
                 h5.card-title= game.title
                 p.card-text
@@ -30,7 +29,6 @@ block content
                   strong Data premiery: 
                   | #{game.release_date}
                 p.card-text= game.description
-                // Dodanie przycisku "Usuń grę"
                 .d-grid
                   button.btn.btn-primary(onclick=`gameWishlistRemove(${game.game_id})`) Usuń grę
     else
@@ -66,7 +64,7 @@ block content
         const gameCard = `
           <div class="col-md-4 mb-4">
             <div class="card shadow-sm p-3">
-              ${game.image_url ? `<img class="card-img-top" src="${game.image_url}" alt="${game.title}">` : ''}
+              ${game.image_url ? `<img class="card-img-top" src="/images/${game.image_url}" alt="${game.title}">` : ''}
               <div class="card-body">
                 <h5 class="card-title">${game.title}</h5>
                 <p class="card-text">
