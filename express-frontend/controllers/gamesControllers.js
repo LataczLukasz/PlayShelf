@@ -37,7 +37,20 @@ exports.getRating = async (req, res) => {
         const myReviews = response.data.my_review;
         const game = response.data.game;
         const game_id = response.data.game_id;
-        res.render('rating', { reviews, game, myReviews, game_id });
+
+        let averageRating = 0;
+        if (reviews.length > 0) {
+            const allRatings = reviews.map(review => review.rating);
+            
+            if (myReviews && myReviews.rating) {
+                allRatings.push(myReviews.rating);
+            }
+
+            const totalRating = allRatings.reduce((sum, rating) => sum + rating, 0);
+            averageRating = totalRating / allRatings.length;
+        }
+
+        res.render('rating', { reviews, game, myReviews, game_id, averageRating });
     } catch (error) {
         console.error('Błąd podczas pobierania szczegółów gry:', error);
         res.status(500).send('Wystąpił błąd podczas pobierania szczegółów gry.');

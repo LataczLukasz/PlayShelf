@@ -3,6 +3,7 @@ extends layout
 block content
   .container
     h1 Szczegóły Recenzji dla gry #{game}
+    h3(class="mt-4 mb-3 ") Średnia ocena: #{averageRating.toFixed(2)}
 
     table.table.table-bordered
       thead
